@@ -1,0 +1,68 @@
+---
+title: "hw_wk1"
+author: "Yunting Chiu"
+date: "8/28/2020"
+output: pdf_document
+---
+
+## The Code of question 3a to 3d
+#### Libraies and read Data
+
+```{r}
+library(readr)
+library(tidyverse)
+library(ggplot2)
+library(mosaic)
+SDE <- read_csv(file = "../data/case0102.csv")
+tail(SDE)
+```
+
+
+3.	Using R find numerical and graphical summaries of this data. Use these to describe the distribution of the starting salaries for both males and females.
+
+a.	Give and interpret the mean salary and standard deviation of salaries for females. Do this also for males.
+```{r}
+#mean salary of female and male
+SDE %>%
+  filter(Sex == "Female") -> SDE_Female
+mean(SDE_Female$Salary)  
+SDE %>%
+  filter(Sex == "Male") -> SDE_Male
+mean(SDE_Male$Salary)
+
+# SD
+sd(SDE_Female$Salary)  #SD for Female
+sd(SDE_Male$Salary) # SD for Male
+```
+
+b.	Give and interpret the median salary and the IQR of salaries for females. Do this also for males.
+```{r}
+# find interquartile range of female in R
+summary(SDE_Female$Salary)  
+
+# find interquartile range of male in R
+summary(SDE_Female$Salary)  
+```
+
+c.	Give a histogram of salaries for each group. 
+```{r}
+hist(SDE_Female$Salary)
+hist(SDE_Male$Salary)
+```
+
+d.	Give side-by-side boxplots of salaries.
+```{r}
+SDE %>%
+  ggplot(mapping = aes(x = Sex, y = Salary, fill = Sex))+
+  geom_boxplot()+
+  theme_bw()
+```
+
+e. Use a. to d. to describe the distribution of salaries for each group.
+```{r}
+favstats(Salary ~ Sex, data = SDE)
+histogram(~Salary | Sex, data = SDE, col = "red")
+```
+
+
+
