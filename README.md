@@ -1,2 +1,2 @@
 # STAT614_Statistical-Method
-homework
+Homework and some practices with R scripts.
