@@ -8,6 +8,7 @@ output: pdf_document
 ```{r}
 library(tidyverse)
 library(readr)
+library(dplyr)
 
 # read homework's data
 bloodlead <- read_csv(file = "/Users/yunting/Google_Drive/American_University/2020_Fall/STAT-614-001_Statistical_Methods/homework/wk2/data/lead.csv")
@@ -73,4 +74,12 @@ hist(group1$MAXFT)
 hist(group2$MAXFT)
 ```
 
+# What information can we get from the Boxplot of the outcome for each GROUP?
+```{r}
+mg %>%
+  mutate(GROUP = as.character(GROUP)) -> mg
+qplot(x = mg$GROUP,y = mg$MAXFT, geom = "boxplot", 
+      fill = I("dark green"),
+      color = I("black"))
+```
 

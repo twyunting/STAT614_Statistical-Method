@@ -1,6 +1,7 @@
 # add libraries
 library(tidyverse)
 library(readr)
+library(dplyr)
 
 # read homework's data
 bloodlead <- read_csv(file = "../data/lead.csv")
@@ -44,5 +45,9 @@ median(group2$MAXFT)
 hist(group1$MAXFT)
 hist(group2$MAXFT)
 
-
-  
+# What information can we get from the Boxplot of the outcome for each GROUP?
+mg %>%
+  mutate(GROUP = as.character(GROUP)) -> mg
+qplot(x = mg$GROUP,y = mg$MAXFT, geom = "boxplot", 
+      fill = I("dark green"),
+      color = I("black")) 
