@@ -1,0 +1,11 @@
+---
+title: "showing_data"
+author: "Yunting Chiu"
+date: "9/2/2020"
+output: pdf_document
+---
+
+```{r}
+
+```
+
