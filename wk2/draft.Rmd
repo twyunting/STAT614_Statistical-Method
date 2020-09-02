@@ -1,35 +1,61 @@
-# add libraries
+---
+title: "showing_data"
+author: "Yunting Chiu"
+date: "9/2/2020"
+output: pdf_document
+---
+
+```{r}
 library(tidyverse)
 library(readr)
 
 # read homework's data
-bloodlead <- read_csv(file = "../data/lead.csv")
+bloodlead <- read_csv(file = "/Users/yunting/Google_Drive/American_University/2020_Fall/STAT-614-001_Statistical_Methods/homework/wk2/data/lead.csv")
+bloodlead
+```
+
+# read homework's data
+```{r}
+bloodlead <- read_csv(file = "/Users/yunting/Google_Drive/American_University/2020_Fall/STAT-614-001_Statistical_Methods/homework/wk2/data/lead.csv")
 head(bloodlead)
+```
 
 # How many individuals are in the data set?
+```{r}
 nrow(bloodlead)
+```
 
 # How many variables are in this data set?
+```{r}
 ncol(bloodlead)
+```
 
 # How many individuals have MAXFT scores measured? 
+```{r}
 bloodlead %>%
   filter(!is.na(MAXFT)) -> MAXFTrm
 nrow(MAXFTrm)
+```
 
 # How many have IQF scores measured?
+```{r}
 bloodlead %>%
   filter(!is.na(iqf)) -> iqf
 nrow(iqf)
+```
 
 # compare MAXFT and GROUP
+```{r}
 MAXFTrm %>%
   select(MAXFT, GROUP) -> mg
-head(mg)
+  head(mg)
+
 # Group1: children with elevated blood-lead levels >= 40 g/ml
 # Group2: children with elevated blood-lead levels < 40 g/ml
+```
 
-# What are the mean and median of the outcome for each group?
+# What are the mean and median of the outcome?
+```{r}
 mg %>%
   filter(GROUP == 1) -> group1
 mean(group1$MAXFT)
@@ -39,10 +65,12 @@ mg %>%
   filter(GROUP == 2) -> group2
 mean(group2$MAXFT)
 median(group2$MAXFT)
+```
 
 # Describe the shape of the distribution (i.e. histogram) of the outcome for each GROUP.
+```{r}
 hist(group1$MAXFT)
 hist(group2$MAXFT)
+```
 
 
-  
