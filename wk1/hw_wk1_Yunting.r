@@ -15,6 +15,7 @@ library(readr)
 library(tidyverse)
 library(ggplot2)
 library(mosaic)
+
 SDE <- read_csv(file = "../data/case0102.csv")
 tail(SDE)
 
