@@ -1,0 +1,19 @@
+---
+title: "Untitled"
+author: "Yunting Chiu"
+date: "9/10/2020"
+output: pdf_document
+---
+```{r}
+library(tidyverse)
+```
+
+```{r}
+pnorm(47, mean = 37, sd = 5)+ pnorm(47, mean = 37, sd = 5)
+```
+
+```{r}
+x <- data.frame("Age_group" = c("1-14 Years old","15-44 Years old"), "Mean" = c(105,124), "SD" = c(4, 9), "Level" = c(115, 140))
+x
+```
+
