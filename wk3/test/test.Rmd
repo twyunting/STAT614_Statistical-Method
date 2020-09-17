@@ -9,6 +9,21 @@ library(tidyverse)
 ```
 
 ```{r}
+x <- 1- pnorm(115, 105, 4)
+x
+```
+
+```{r}
+x <- 1- pnorm(140,124,9)
+x
+```
+
+```{r}
+x <- pnorm(115, 105, 4)
+x
+```
+
+```{r}
 pnorm(47, mean = 37, sd = 5)+ pnorm(47, mean = 37, sd = 5)
 ```
 
