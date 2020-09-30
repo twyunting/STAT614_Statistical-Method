@@ -1,0 +1,78 @@
+---
+title: "Untitled"
+author: "Yunting Chiu"
+date: "9/27/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+5. Use the lead.csv data set from HW 1. Revisit HW 1 for a description of this data set and study. For this problem you will compare the Wechsler full-scale IQ scores (the variable IQF) between the different lead exposure groups, denoted by the GROUP variable.
+```{r}
+library(mosaic)
+library(tidyverse)
+library(readr)
+bloodlead <- read_csv(file = "lead.csv")
+print(bloodlead)
+
+bloodlead %>%
+  filter(GROUP == 1) -> leadGroup1
+bloodlead %>%
+  filter(GROUP == 2) -> leadGroup2
+nrow(leadGroup1)
+nrow(leadGroup2)
+```
+
+a. Compute the mean, standard deviation, standard error, and 95% confidence interval for the population mean IQ score for **each** lead exposure group, separately. Summarize each confidence interval. 
+*  IQF = the Wechsler full-scale IQ score.
+```{r}
+# mean and standard deviation of group 1
+favstats(~iqf, data = leadGroup1)
+```
+
+
+```{r}
+# mean and standard deviation of group 2
+favstats(~iqf, data = leadGroup2)
+```
+
+```{r}
+# standard error of group 1, 2
+library(plotrix)
+std.error(leadGroup1$iqf, na.rm = TRUE)
+std.error(leadGroup2$iqf, na.rm = TRUE)
+```
+
+```{r}
+# 95% confidence interval of group 1
+tout1 <- t.test(~iqf,data = leadGroup1, conf.level = 0.95)
+attributes(tout1)
+```
+
+```{r}
+# 95% confidence interval of group 2
+tout2 <- t.test(~iqf,data = leadGroup2, conf.level = 0.95)
+tout2
+attributes(tout2)
+```
+
+b. Researchers were interested in assessing the difference in the mean IQ score between the two exposure group populations. Give the estimate mean difference, the standard error, and the 95% confidence interval for the difference in population mean IQ scores. Summarize the confidence interval. 
+```{r}
+# group1 and group2 two sample t-test
+t.test(iqf~GROUP, data = bloodlead, conf.level = 0.95) # iqf by each Group
+```
+
+```{r}
+# group1 and group2 two sample t-test
+t.test(iqf~GROUP, mu = 0, data = bloodlead, conf.level = 0.95) # iqf by each Group
+```
+
+c. Researchers hypothesized that the exposed group (GROUP = 1) would have a lower population mean IQ score than the control group (GROUP = 2). Set up and conduct a statistical hypothesis test to address the research hypothesis. Carefully state the null and alternative hypotheses to be tested. Give the parameter of interest, the estimate of this parameter, the standard error of the estimate, the test statistic, and the p-value. Summarize the results of the test. 
+```{r}
+# group1 and group2 two sample t-test
+t.test(iqf~GROUP, mu = 0, data = bloodlead, conf.level = 0.95) # iqf by each Group
+```
+	
+	
