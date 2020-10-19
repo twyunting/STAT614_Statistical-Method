@@ -1,0 +1,45 @@
+---
+title: "HW4"
+author: "Yunting Chiu"
+date: "10/18/2020"
+output: pdf_document
+---
+
+```{r}
+library(tidyverse)
+library(mosaic)
+vaild <- read_csv("https://s3.amazonaws.com/blackboard.learn.xythos.prod/5a306634d5d25/4188093?response-cache-control=private%2C%20max-age%3D21600&response-content-disposition=inline%3B%20filename%2A%3DUTF-8%27%27valid.txt&response-content-type=text%2Fplain&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20201018T150000Z&X-Amz-SignedHeaders=host&X-Amz-Expires=21600&X-Amz-Credential=AKIAYDKQORRYTKBSBE4S%2F20201018%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=edbf399a0d4eb5a1053a8a38161cb8fe2e6b4c59b65fba131750365fda0c71e3")
+print(vaild)
+summary(vaild)
+dim(vaild)
+```
+
+- rename
+```{r}
+vaild %>%
+  rename("Id" = "'Id'", "alco_dr" = "'alco_dr'", "alco_ffq" = "'alco_ffq'") -> vaild
+vaild
+```
+
+- EDA (exploratory data analysis) is always a good idea
+```{r}
+favstats(~alco_dr, data = vaild) 
+favstats(~alco_ffq, data = vaild) 
+```
+
+- create a DIFF variable
+```{r}
+vaild = transform(vaild, DIFF = alco_dr - alco_ffq) # what does this do?!
+favstats(~DIFF, data = vaild)
+head(vaild)
+```
+
+- Check the assumptions (y = Diff)
+```{r}
+boxplot(vaild$alco_dr, vaild$alco_ffq)
+consDiff <- vaild$alco_dr - vaild$alco_ffq # consumption different
+boxplot(consDiff, col = "steelblue")
+hist(consDiff,col="steelblue")
+qplot(sample = consDiff, geom = "qq") + geom_qq_line()
+```
+
