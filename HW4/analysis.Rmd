@@ -8,7 +8,7 @@ output: pdf_document
 ```{r}
 library(tidyverse)
 library(mosaic)
-vaild <- read_csv("https://s3.amazonaws.com/blackboard.learn.xythos.prod/5a306634d5d25/4188093?response-cache-control=private%2C%20max-age%3D21600&response-content-disposition=inline%3B%20filename%2A%3DUTF-8%27%27valid.txt&response-content-type=text%2Fplain&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20201018T150000Z&X-Amz-SignedHeaders=host&X-Amz-Expires=21600&X-Amz-Credential=AKIAYDKQORRYTKBSBE4S%2F20201018%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=edbf399a0d4eb5a1053a8a38161cb8fe2e6b4c59b65fba131750365fda0c71e3")
+vaild <- read_csv("https://s3.amazonaws.com/blackboard.learn.xythos.prod/5a306634d5d25/4188093?response-cache-control=private%2C%20max-age%3D21600&response-content-disposition=inline%3B%20filename%2A%3DUTF-8%27%27valid.txt&response-content-type=text%2Fplain&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20201020T030000Z&X-Amz-SignedHeaders=host&X-Amz-Expires=21600&X-Amz-Credential=AKIAYDKQORRYTKBSBE4S%2F20201020%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=67980e0b2d45f6af0e069e51617f0b81cad46973c62a5cfcef2551c1a648b4ec")
 print(vaild)
 summary(vaild)
 dim(vaild)
@@ -22,24 +22,49 @@ vaild
 ```
 
 - EDA (exploratory data analysis) is always a good idea
-```{r}
-favstats(~alco_dr, data = vaild) 
-favstats(~alco_ffq, data = vaild) 
-```
 
 - create a DIFF variable
 ```{r}
-vaild = transform(vaild, DIFF = alco_dr - alco_ffq) # what does this do?!
+vaild = transform(vaild, DIFF = alco_dr - alco_ffq) 
+vaild %>%
+  select(alco_dr, alco_ffq, DIFF) -> vaild02
 favstats(~DIFF, data = vaild)
 head(vaild)
 ```
 
 - Check the assumptions (y = Diff)
 ```{r}
-boxplot(vaild$alco_dr, vaild$alco_ffq)
 consDiff <- vaild$alco_dr - vaild$alco_ffq # consumption different
+favstats(consDiff)
 boxplot(consDiff, col = "steelblue")
 hist(consDiff,col="steelblue")
 qplot(sample = consDiff, geom = "qq") + geom_qq_line()
+```
+
+- Consider a square root transformation of the alcohol data
+```{r}
+vaild %>%
+  mutate(alco_drSqrt = sqrt(alco_dr),
+         alco_ffqSqrt = sqrt(alco_ffq)) -> vaildSqrt
+
+# Check the assumptions of two dependent samples again!
+# use another way to create a DIFF variable
+
+diffSqrt = vaildSqrt$alco_drSqrt - vaildSqrt$alco_ffqSqrt  
+cbind(vaildSqrt, diffSqrt)
+
+favstats(diffSqrt)
+boxplot(diffSqrt, col = "yellow")
+qplot(sample = diffSqrt, geom = "qq") + geom_qq_line()
+hist(diffSqrt ,col = "yellow")
+
+```
+
+- Conduct the appropriate test on the square root transformed data 
+```{r}
+# Ha: DR > FFQ
+out = wilcox.test(vaildSqrt$alco_drSqrt, vaildSqrt$alco_ffqSqrt
+                  ,paired = T,exact = F,conf.int = T, alternative = "greater")
+print(out)
 ```
 
