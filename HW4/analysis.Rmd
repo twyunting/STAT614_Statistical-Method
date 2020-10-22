@@ -8,7 +8,7 @@ output: pdf_document
 ```{r}
 library(tidyverse)
 library(mosaic)
-vaild <- read_csv("https://s3.amazonaws.com/blackboard.learn.xythos.prod/5a306634d5d25/4188093?response-cache-control=private%2C%20max-age%3D21600&response-content-disposition=inline%3B%20filename%2A%3DUTF-8%27%27valid.txt&response-content-type=text%2Fplain&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20201020T030000Z&X-Amz-SignedHeaders=host&X-Amz-Expires=21600&X-Amz-Credential=AKIAYDKQORRYTKBSBE4S%2F20201020%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=67980e0b2d45f6af0e069e51617f0b81cad46973c62a5cfcef2551c1a648b4ec")
+vaild <- read_csv("https://s3.amazonaws.com/blackboard.learn.xythos.prod/5a306634d5d25/4188093?response-cache-control=private%2C%20max-age%3D21600&response-content-disposition=inline%3B%20filename%2A%3DUTF-8%27%27valid.txt&response-content-type=text%2Fplain&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20201022T030000Z&X-Amz-SignedHeaders=host&X-Amz-Expires=21600&X-Amz-Credential=AKIAYDKQORRYTKBSBE4S%2F20201022%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=83da5999cd9087899b2a84a34bcda3ba50b3e6951f259da9c258fc8c591ac6e2")
 print(vaild)
 summary(vaild)
 dim(vaild)
@@ -61,10 +61,37 @@ hist(diffSqrt ,col = "yellow")
 ```
 
 - Conduct the appropriate test on the square root transformed data 
+
 ```{r}
-# Ha: DR > FFQ
-out = wilcox.test(vaildSqrt$alco_drSqrt, vaildSqrt$alco_ffqSqrt
-                  ,paired = T,exact = F,conf.int = T, alternative = "greater")
-print(out)
+# Ha: DR > FFQ, but check CI with two sided
+toutCI <- t.test(vaildSqrt$alco_drSqrt, vaildSqrt$alco_ffqSqrt,
+                  con.level = 0.95, alternative = "two.sided")
+print(toutCI)
+```
+```{r}
+# Ha: DR > FFQ for research question
+toutRQ <- t.test(vaildSqrt$alco_drSqrt, vaildSqrt$alco_ffqSqrt,
+                  con.level = 0.95, alternative = "greater")
+print(toutRQ)
+```
+
+- the original data: check CI
+```{r}
+WoutCI <- wilcox.test(vaild$alco_dr, vaild$alco_ffq,
+                  paired = T,exact = F,conf.int = T, alternative = "two.sided")
+print(WoutCI)
+```
+
+```{r}
+WoutCIQ <- wilcox.test(vaildSqrt$alco_drSqrt, vaildSqrt$alco_ffqSqrt,
+                  paired = T,exact = F,conf.int = T, alternative = "two.sided")
+print(WoutCIQ)
+```
+
+- the original data: check research question
+```{r}
+WoutRQ <- wilcox.test(vaild$alco_dr, vaild$alco_ffq,
+                  paired = T,exact = F,conf.int = T, alternative = "greater")
+print(WoutRQ)
 ```
 
