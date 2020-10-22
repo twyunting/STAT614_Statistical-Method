@@ -8,7 +8,7 @@ output: pdf_document
 ```{r}
 library(tidyverse)
 library(mosaic)
-vaild <- read_csv("https://s3.amazonaws.com/blackboard.learn.xythos.prod/5a306634d5d25/4188093?response-cache-control=private%2C%20max-age%3D21600&response-content-disposition=inline%3B%20filename%2A%3DUTF-8%27%27valid.txt&response-content-type=text%2Fplain&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20201022T030000Z&X-Amz-SignedHeaders=host&X-Amz-Expires=21600&X-Amz-Credential=AKIAYDKQORRYTKBSBE4S%2F20201022%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=83da5999cd9087899b2a84a34bcda3ba50b3e6951f259da9c258fc8c591ac6e2")
+vaild <- read_csv("https://s3.amazonaws.com/blackboard.learn.xythos.prod/5a306634d5d25/4188093?response-cache-control=private%2C%20max-age%3D21600&response-content-disposition=inline%3B%20filename%2A%3DUTF-8%27%27valid.txt&response-content-type=text%2Fplain&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20201022T120000Z&X-Amz-SignedHeaders=host&X-Amz-Expires=21600&X-Amz-Credential=AKIAYDKQORRYTKBSBE4S%2F20201022%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=0dc8ba4d4c6acfd4b5cc878f78d8fed3cf09b0c3330db92181664349be88b3d1")
 print(vaild)
 summary(vaild)
 dim(vaild)
@@ -73,6 +73,17 @@ print(toutCI)
 toutRQ <- t.test(vaildSqrt$alco_drSqrt, vaildSqrt$alco_ffqSqrt,
                   con.level = 0.95, alternative = "greater")
 print(toutRQ)
+```
+```{r}
+favstats(vaildSqrt$alco_drSqrt)
+```
+```{r}
+favstats(vaildSqrt$alco_ffqSqrt)
+```
+
+- standard error
+```{r}
+toutRQ$stderr
 ```
 
 - the original data: check CI
