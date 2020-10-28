@@ -1,0 +1,173 @@
+---
+title: "Analysis of Lead Groups"
+author: "Yunting Chiu"
+date: "10/25/2020"
+output: html_document
+---
+
+```{r}
+library(mosaic)
+library(beanplot)
+library(tidyverse)
+lead <- read_csv("lead.csv")
+lead
+```
+- EDA
+```{r}
+summary(lead$lead_typ)
+favstats(MAXFT ~ lead_typ, data = lead)
+```
+- remove NAs of MAXFT
+```{r}
+lead %>%
+  filter(!is.na(MAXFT)) -> leadRealMAXFT
+favstats(MAXFT ~ lead_typ, data = leadRealMAXFT)
+```
+
+- qqplot
+```{r}
+# lead_typ1
+par(mfrow=c(1,3))
+qqnorm(leadRealMAXFT$MAXFT[lead$lead_typ == 1],main="lead_typ1", pch = 19)
+qqline(leadRealMAXFT$MAXFT[lead$lead_typ == 1])
+
+# lead_typ2
+qqnorm(leadRealMAXFT$MAXFT[lead$lead_typ == 2],main="lead_typ2", pch = 19)
+qqline(leadRealMAXFT$MAXFT[lead$lead_typ == 2])
+
+# lead_typ3
+qqnorm(leadRealMAXFT$MAXFT[lead$lead_typ == 3],main="lead_typ3", pch = 19)
+qqline(leadRealMAXFT$MAXFT[lead$lead_typ == 3])
+```
+- histogram
+```{r}
+par(mfrow=c(1,3)) # creates a single 1 by 3 grid of our three histograms
+hist(leadRealMAXFT$MAXFT[lead$lead_typ == 1],main="lead_typ1", xlab = ' MAXFT scores')    
+hist(leadRealMAXFT$MAXFT[lead$lead_typ == 2],main="lead_typ2", xlab = ' MAXFT scores')  
+hist(leadRealMAXFT$MAXFT[lead$lead_typ == 3],main="lead_typ3", xlab = ' MAXFT scores')  
+```
+
+- Shapiro-Wilk Normality Test
+```{r}
+shapiro.test(leadRealMAXFT$MAXFT)
+```
+- boxplots
+```{r}
+boxplot(leadRealMAXFT$MAXFT ~ leadRealMAXFT$lead_typ,
+        names= c("lead_typ1","lead_typ2","lead_typ3"),col = "steelblue")
+```
+- Data transformation (log)
+```{r}
+leadRealMAXFT %>%
+  mutate(LogMAXFT = sqrt(MAXFT)) -> leadLogMAXFT
+```
+
+```{r}
+boxplot(leadLogMAXFT$LogMAXFT ~ leadLogMAXFT$lead_typ,
+        names= c("lead_typ1","lead_typ2","lead_typ3"),col = "green")
+```
+
+- extract the lead_type
+```{r}
+lead %>%
+  filter(lead_typ == 1) -> lead_typ1
+lead_typ1 %>%
+summarize(across(everything(), ~sum(is.na(.))))
+
+lead %>%
+  filter(lead_typ == 2) -> lead_typ2
+lead_typ2 %>%
+summarize(across(everything(), ~sum(is.na(.))))
+
+lead %>%
+  filter(lead_typ == 3) -> lead_typ3
+lead_typ3 %>%
+summarize(across(everything(), ~sum(is.na(.))))
+```
+
+- remove outliers based on mean
+```{r}
+lead %>%
+  filter(!is.na(MAXFT)) -> leadRealMAXFT
+favstats(MAXFT ~ lead_typ, data = leadRealMAXFT)
+```
+
+```{r}
+leadRealMAXFT %>%
+  filter(MAXFT >= 30 & MAXFT <= 70) -> leadRmOutliers
+favstats(MAXFT ~ lead_typ, data = leadRmOutliers)
+```
+
+- re-run the analyses: qqplot
+```{r}
+# lead_typ1
+par(mfrow=c(1,3))
+qqnorm(leadRmOutliers$MAXFT[lead$lead_typ == 1],main="lead_typ1", pch = 19)
+qqline(leadRmOutliers$MAXFT[lead$lead_typ == 1])
+
+# lead_typ2
+qqnorm(leadRmOutliers$MAXFT[lead$lead_typ == 2],main="lead_typ2", pch = 19)
+qqline(leadRmOutliers$MAXFT[lead$lead_typ == 2])
+
+# lead_typ3
+qqnorm(leadRmOutliers$MAXFT[lead$lead_typ == 3],main="lead_typ3", pch = 19)
+qqline(leadRmOutliers$MAXFT[lead$lead_typ == 3])
+```
+
+- histogram
+```{r}
+par(mfrow=c(1,3)) # creates a single 1 by 3 grid of our three histograms
+hist(leadRmOutliers$MAXFT[lead$lead_typ == 1],main="lead_typ1", xlab = ' MAXFT scores')    
+hist(leadRmOutliers$MAXFT[lead$lead_typ == 2],main="lead_typ2", xlab = ' MAXFT scores')  
+hist(leadRmOutliers$MAXFT[lead$lead_typ == 3],main="lead_typ3", xlab = ' MAXFT scores')  
+```
+
+- - boxplots
+```{r}
+boxplot(leadRmOutliers$MAXFT ~ leadRmOutliers$lead_typ,
+        names= c("lead_typ1","lead_typ2","lead_typ3"),col = "red")
+```
+- beanplot
+```{r}
+beanplot(leadRmOutliers$MAXFT ~ leadRmOutliers$lead_typ, names = c ("lead_typ1","lead_typ2","lead_typ3"),col="red")
+
+```
+
+- Shapiro-Wilk Normality Test
+```{r}
+shapiro.test(leadRmOutliers$MAXFT)
+```
+
+- ANOVA model
+```{r}
+model.fit <- aov(MAXFT ~ lead_typ, data = leadRmOutliers)  # aov = anova model
+anova(model.fit) # anova table 
+```
+
+```{r}
+model.fit <- lm(MAXFT ~ lead_typ, data = leadRmOutliers)  # aov = anova model
+anova(model.fit) # anova table 
+```
+- RQ2
+```{r}
+tout <- t.test(leadRmOutliers$MAXFT[leadRmOutliers$lead_typ == 2],
+                leadRmOutliers$MAXFT[leadRmOutliers$lead_typ == 3])
+tout
+
+```
+
+- RQ2
+```{r}
+toutRQ <- t.test(leadRmOutliers$MAXFT[leadRmOutliers$lead_typ == 2],
+                leadRmOutliers$MAXFT[leadRmOutliers$lead_typ == 3],
+                alternative = "greater")
+toutRQ
+toutRQ$stderr
+```
+
+- All pairwise comparisons
+```{r}
+library(DescTools)
+
+```
+
