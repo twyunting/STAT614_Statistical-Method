@@ -2,7 +2,8 @@
 title: "Analysis of Lead Groups"
 author: "Yunting Chiu"
 date: "10/25/2020"
-output: html_document
+output: pdf_document
+        
 ---
 
 ```{r}
@@ -140,13 +141,15 @@ shapiro.test(leadRmOutliers$MAXFT)
 
 - ANOVA model
 ```{r}
+leadRmOutliers %>%
+  mutate(lead_typ = as.factor(lead_typ)) -> leadRmOutliers
 model.fit <- aov(MAXFT ~ lead_typ, data = leadRmOutliers)  # aov = anova model
 anova(model.fit) # anova table 
 ```
 
 ```{r}
-model.fit <- lm(MAXFT ~ lead_typ, data = leadRmOutliers)  # aov = anova model
-anova(model.fit) # anova table 
+#model.fit <- lm(MAXFT ~ lead_typ, data = leadRmOutliers)  # aov = anova model
+#anova(model.fit) # anova table 
 ```
 - RQ2
 ```{r}
@@ -168,6 +171,6 @@ toutRQ$stderr
 - All pairwise comparisons
 ```{r}
 library(DescTools)
-
+PostHocTest(model.fit, method = "bonferroni") 
 ```
 
