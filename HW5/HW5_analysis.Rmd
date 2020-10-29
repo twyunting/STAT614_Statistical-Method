@@ -171,6 +171,15 @@ toutRQ$stderr
 - All pairwise comparisons
 ```{r}
 library(DescTools)
-PostHocTest(model.fit, method = "bonferroni") 
+PostHocTest(model.fit, method = "lsd") 
+```
+
+- All pairwise comparisons for orginal data
+```{r}
+leadRealMAXFT %>%
+  mutate(lead_typ = as.factor(lead_typ)) -> leadRealMAXFT
+model.fit01 <- aov(MAXFT ~ lead_typ, data = leadRealMAXFT)  # aov = anova model
+# anova(model.fit01) # anova table 
+PostHocTest(model.fit01, method = "lsd") 
 ```
 
