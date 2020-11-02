@@ -1,0 +1,83 @@
+---
+title: "Analysis"
+author: "Yunting Chiu"
+date: "10/29/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+- Libraries
+```{r}
+library(tidyverse)
+```
+
+- read data
+```{r}
+lead <- read_csv("lead.csv")
+lead
+#  removing observations that are missing MAXFT values before you fit any models. 
+lead %>%
+  filter(!is.na(MAXFT)) -> leadRealMAXFT 
+leadRealMAXFT %>%
+  mutate(lead_typ = recode(lead_typ,"1" = "group1",
+                                    "2" = "group2",
+                                    "3" = "group3")) -> leadRealMAXFT 
+```
+
+```{r}
+summary(lead$MAXFT) # note the NA's are missing values!
+summary(lead$lead_typ) # no missing here
+sublead <- data.frame(MAXFT=lead$MAXFT,lead_typ=lead$lead_typ) # extract only the two vars of interest summary(sublead)
+sublead <- sublead[complete.cases(sublead),] # keeps on those without missing (NA) values summary(sublead)
+model.fit <- aov(MAXFT~factor(lead_typ),data=sublead)
+qplot(x = sublead$lead_typ, y = model.fit$residuals, xlab='exposure group', ylab='residual',
+main='residuals vs. exposure group')
+```
+
+```{r}
+model.fit <- aov(MAXFT ~ factor(lead_typ),data = leadRealMAXFT)
+out <- data.frame(group = leadRealMAXFT$lead_typ, score = leadRealMAXFT$MAXFT,
+                    yhat = model.fit$fitted.values, resid = model.fit$residuals)
+out
+```
+
+```{r}
+qplot(x = as.factor(leadRealMAXFT$lead_typ), y = model.fit$residuals, 
+      xlab = "lead groups", ylab = "residuals")
+```
+
+```{r}
+qplot(sample = model.fit$residuals, geom = "qq") +
+  geom_qq_line()
+```
+```{r}
+shapiro.test(model.fit$residuals)
+```
+
+- Professor's slutions
+```{r}
+model.fit <- aov(MAXFT~factor(lead_typ),data = lead)
+qplot(x = model.fit$fitted, y = model.fit$residuals, xlab='fitted values(yhat)', ylab='residual',
+main='residuals vs. fitted values (yhat)')
+
+```
+
+- nonparametric ANOVA method
+```{r}
+kruskal.test(MAXFT ~ lead_typ, data = leadRealMAXFT)
+```
+
+```{r}
+pairwise.wilcox.test(leadRealMAXFT$MAXFT, leadRealMAXFT$lead_typ,
+                     p.adjust.method = "bonf", exact = FALSE)
+```
+
+- question 2
+```{r}
+# pf(x,numdf(between), denomdf(within))
+pf(3.5, df1 = 5117, df2 = 1462, lower.tail = FALSE)
+
+```
+
