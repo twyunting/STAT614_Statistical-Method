@@ -77,7 +77,8 @@ pairwise.wilcox.test(leadRealMAXFT$MAXFT, leadRealMAXFT$lead_typ,
 - question 2
 ```{r}
 # pf(x,numdf(between), denomdf(within))
-pf(3.5, df1 = 5117, df2 = 1462, lower.tail = FALSE)
+pf(3.5, df1 = 7, df2 = 24, lower.tail = FALSE)
 
+# lower.tail: logical; if TRUE (default), probabilities are P[X ≤ x], otherwise, P[X > x].
 ```
 
