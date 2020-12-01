@@ -1,0 +1,118 @@
+---
+title: "HW 8 analysis"
+author: "Yunting Chiu"
+date: "11/28/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(leaps)
+library(mosaic)
+fev <- read_csv("FEV.csv")
+fev
+summary(fev)
+```
+```{r}
+fevlm <- lm(FEV ~ Smoke + Age + Hgt + Sex, data = fev)
+fevlm
+summary(fevlm)
+anova(fevlm)
+```
+- best subsets criterion - using the regsubsets() function of the leaps package
+```{r}
+best <- regsubsets(FEV ~ Smoke + Age + Hgt + Sex, data = fev, method = "exhaustive", nbest=5)
+best
+```
+
+```{r}
+par(mfrow=c(2,2))
+plot(fevlm$fitted.values,fevlm$residuals,pch=19,xlab='fitted values',ylab='residuals',main='residuals vs. fitted values')
+qqnorm(fevlm$residuals,pch=19)
+qqline(fevlm$residuals)
+plot(fev$FEV,fevlm$residuals,pch=19,xlab='FEV',ylab='residuals',main='residuals vs. FEV')
+plot(fev$Smoke,fevlm$residuals,pch=19,xlab='Smoke',ylab='residuals',main='residuals vs. Smoke')
+par(mfrow=c(1,1))
+
+```
+
+- Get other diagnostics measures
+```{r}
+leverage <- hatvalues(fevlm)
+student <- rstudent(fevlm)
+dfs <- dffits(fevlm)
+cooksd <- cooks.distance(fevlm)
+data.frame(FEV = fev$FEV, fitted = fevlm$fitted,
+           residual = fevlm$residual, leverage, student, dffits = dfs, cooksd) -> diag
+
+par(mfrow=c(2,2))
+plot(leverage,type='h')
+abline(h=0)
+plot(student,type='h')
+abline(h=0)
+plot(dfs,type='h',ylab='dffit')
+abline(h=0)
+plot(cooksd,type='h')
+abline(h=0)
+```
+
+```{r}
+diag %>%
+  arrange(desc(leverage))
+```
+
+```{r}
+fev %>%
+  mutate(logFEV = log(FEV)) -> fev02
+fev02
+```
+
+```{r}
+fev02lm <- lm(logFEV ~ Smoke + Age + Hgt + Sex, data = fev02)
+summary(fev02lm)
+```
+
+```{r}
+par(mfrow=c(2,2))
+plot(fev02lm$fitted.values,fev02lm$residuals,pch=19,xlab='fitted values',ylab='residuals',main='residuals vs. fitted values')
+qqnorm(fev02lm$residuals,pch=19)
+qqline(fev02lm$residuals)
+plot(fev02$logFEV,fev02lm$residuals,pch=19,xlab='logFEV',ylab='residuals',main='residuals vs.logFEV')
+plot(fev02$Smoke,fev02lm$residuals,pch=19,xlab='Smoke',ylab='residuals',main='residuals vs. Smoke')
+par(mfrow=c(1,1))
+```
+
+- Get other diagnostics measures
+```{r}
+leverage <- hatvalues(fev02lm)
+student <- rstudent(fev02lm)
+dfs <- dffits(fev02lm)
+cooksd <- cooks.distance(fev02lm)
+data.frame(logFEV = fev02$logFEV, fitted = fev02lm$fitted,
+           residual = fev02lm$residual, leverage, student, dffits = dfs, cooksd) -> diagLog
+
+par(mfrow=c(2,2))
+plot(leverage,type='h')
+abline(h=0)
+plot(student,type='h')
+abline(h=0)
+plot(dfs,type='h',ylab='dffit')
+abline(h=0)
+plot(cooksd,type='h')
+abline(h=0)
+```
+
+```{r}
+diagLog %>%
+  arrange(desc(leverage))
+diagLog %>%
+  arrange(desc(cooksd))
+```
+```{r}
+anova(fev02lm)
+```
+
