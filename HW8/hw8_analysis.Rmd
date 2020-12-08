@@ -84,6 +84,12 @@ qqline(fev02lm$residuals)
 plot(fev02$logFEV,fev02lm$residuals,pch=19,xlab='logFEV',ylab='residuals',main='residuals vs.logFEV')
 plot(fev02$Smoke,fev02lm$residuals,pch=19,xlab='Smoke',ylab='residuals',main='residuals vs. Smoke')
 par(mfrow=c(1,1))
+plot(fev02$Hgt,fev02lm$residuals,pch=19,xlab='Height',ylab='residuals',main='residuals vs. Height')
+par(mfrow=c(1,1))
+plot(fev02$Age,fev02lm$residuals,pch=19,xlab='Age',ylab='residuals',main='residuals vs. Age')
+par(mfrow=c(1,1))
+plot(fev02$Sex,fev02lm$residuals,pch=19,xlab='Sex',ylab='residuals',main='residuals vs. Sex')
+par(mfrow=c(1,1))
 ```
 
 - Get other diagnostics measures
@@ -110,9 +116,20 @@ abline(h=0)
 diagLog %>%
   arrange(desc(leverage))
 diagLog %>%
-  arrange(desc(cooksd))
+  arrange(desc(cooksd)) %>%
+  select(cooksd)
 ```
 ```{r}
 anova(fev02lm)
+summary(fev02lm)
+confint(fev02lm)
+confint(fev02lm, level = 0.95)
+```
+
+- 7
+```{r}
+fev02lmRm02652 <- lm(logFEV ~ Smoke + Age + Hgt + Sex, data = fev02[-c(2,652),]) 
+summary(fev02lmRm02652)
+anova(fev02lmRm02652)
 ```
 
